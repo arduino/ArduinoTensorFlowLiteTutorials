@@ -11,9 +11,9 @@
 
   The circuit:
   - Arduino Nano 33 BLE or Arduino Nano 33 BLE Sense board.
-  - Button connected to pin 3 and GND.
 
   Created by Don Coleman, Sandeep Mistry
+  Modified by Dominic Pajak, Sandeep Mistry
 
   This example code is in the public domain.
 */
@@ -29,10 +29,9 @@
 
 #include "model.h"
 
-const int buttonPin = 3;     // the pin number of the pushbutton pin
+const float accelerationThreshold = 2.5; // threshold of significant in G's
 const int numSamples = 119;
 
-int previousButtonState = HIGH;
 int samplesRead = numSamples;
 
 // global variables used for TensorFlow Lite (Micro)
@@ -64,9 +63,6 @@ const char* GESTURES[] = {
 void setup() {
   Serial.begin(9600);
   while (!Serial);
-
-  // initialize the pushbutton pin as an input with pullup:
-  pinMode(buttonPin, INPUT_PULLUP);
 
   // initialize the IMU
   if (!IMU.begin()) {
@@ -103,32 +99,31 @@ void setup() {
 }
 
 void loop() {
-  // read the state of the push button pin:
-  int buttonState = digitalRead(buttonPin);
+  float aX, aY, aZ, gX, gY, gZ;
 
-  // compare the button state to the previous state
-  // to see if it has changed
-  if (buttonState != previousButtonState) {
-    if (buttonState == LOW) {
-      if (samplesRead == numSamples) {
-        // pressed       }
+  // wait for significant motion
+  while (samplesRead == numSamples) {
+    if (IMU.accelerationAvailable()) {
+      // read the acceleration data
+      IMU.readAcceleration(aX, aY, aZ);
+
+      // sum up the absolutes
+      float aSum = fabs(aX) + fabs(aY) + fabs(aZ);
+
+      // check if it's above the threshold
+      if (aSum >= accelerationThreshold) {
+        // reset the sample read count
         samplesRead = 0;
+        break;
       }
-    } else {
-      // released
     }
-
-    // store the state as the previous state, for the next loop
-    previousButtonState = buttonState;
   }
 
   // check if the all the required samples have been read since
-  // the last time the button has been pressed
-  if (samplesRead < numSamples) {
+  // the last time the significant motion was detected
+  while (samplesRead < numSamples) {
     // check if new acceleration AND gyroscope data is available
     if (IMU.accelerationAvailable() && IMU.gyroscopeAvailable()) {
-      float aX, aY, aZ, gX, gY, gZ;
-
       // read the acceleration and gyroscope data
       IMU.readAcceleration(aX, aY, aZ);
       IMU.readGyroscope(gX, gY, gZ);
