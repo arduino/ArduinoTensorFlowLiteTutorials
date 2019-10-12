@@ -18,6 +18,6 @@ You can enable 3rd party cookies, or better yet, add an exception for `[*.]googl
 
 Open the notebook in Colab.
 
-https://colab.research.google.com/github/sandeepmistry/aimldevfest-workshop-2019/blob/master/arduino_tinyml_workshop.ipynb
+https://colab.research.google.com/github/arduino/ArduinoTensorFlowLiteTutorials/blob/master/GestureToEmoji/arduino_tinyml_workshop.ipynb
 
 Next [Exercise 6: Classifying IMU Data](exercise6.md)
