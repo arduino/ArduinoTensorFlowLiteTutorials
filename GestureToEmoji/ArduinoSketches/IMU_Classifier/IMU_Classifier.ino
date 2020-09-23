@@ -40,7 +40,7 @@ tflite::MicroErrorReporter tflErrorReporter;
 // pull in all the TFLM ops, you can remove this line and
 // only pull in the TFLM ops you need, if would like to reduce
 // the compiled size of the sketch.
-tflite::ops::micro::AllOpsResolver tflOpsResolver;
+tflite::AllOpsResolver tflOpsResolver;
 
 const tflite::Model* tflModel = nullptr;
 tflite::MicroInterpreter* tflInterpreter = nullptr;
