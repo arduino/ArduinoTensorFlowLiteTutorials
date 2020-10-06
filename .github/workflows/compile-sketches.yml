@@ -1,0 +1,28 @@
+name: Compile Sketches
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  compile-sketches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # See: https://github.com/arduino/compile-sketches#readme
+      - name: Compile sketches
+        uses: arduino/compile-sketches@v1
+        with:
+          fqbn: arduino:mbed:nano33ble
+          sketch-paths: |
+            - FruitToEmoji/sketches/object_color_capture
+            - GestureToEmoji/ArduinoSketches/HardwareTest
+            - GestureToEmoji/ArduinoSketches/IMU_Capture
+            - GestureToEmoji/ArduinoSketches/IMU_Classifier
+          libraries: |
+            - name: Arduino_TensorFlowLite
+            - name: Arduino_APDS9960
+            - name: Arduino_LSM9DS1
