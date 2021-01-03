@@ -50,7 +50,7 @@ TfLiteTensor* tflOutputTensor = nullptr;
 // Create a static memory buffer for TFLM, the size may need to
 // be adjusted based on the model you are using
 constexpr int tensorArenaSize = 8 * 1024;
-byte tensorArena[tensorArenaSize];
+byte tensorArena[tensorArenaSize] __attribute__((aligned(16)));
 
 // array to map gesture index to a name
 const char* GESTURES[] = {
